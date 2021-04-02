@@ -1,25 +1,20 @@
 {
     "compilerOptions": {
         "composite": true,
-        "types": [
-            "mocha",
-            "node"
-        ],
+        "types": ["mocha", "node"],
         "traceResolution": true,
         "declaration": true,
         "declarationMap": true,
         "target": "es2016",
         "module": "commonjs",
-        "outDir": "./",
+        "outDir": "./dist",
         "rootDir": "./",
         "sourceMap": true,
         "incremental": true,
         "tsBuildInfoFile": "./.tsbuildinfo",
         "esModuleInterop": true,
-        "noEmit": false,
+        "noEmit": false
     },
     "exclude": [],
-    "include": [
-        "./**/*"
-    ]
+    "include": ["./**/*"]
 }

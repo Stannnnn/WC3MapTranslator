@@ -13,10 +13,6 @@ test/.output
 #
 # TypeScript
 #
-**/*d.ts
-**/*d.ts.map
-**/*js.map
-**/*.js
 .tsbuildinfo
 
 
