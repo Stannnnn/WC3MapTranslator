@@ -50,7 +50,8 @@ class InfoTranslator {
          * Flags
          */
         let flags = 0;
-        if (infoJson.map.flags) { // can leave out the entire flags object, all flags will default to false
+        if (infoJson.map.flags) {
+            // can leave out the entire flags object, all flags will default to false
             if (infoJson.map.flags.hideMinimapInPreview)
                 flags |= 0x0001; // hide minimap in preview screens
             if (infoJson.map.flags.modifyAllyPriorities)
@@ -117,14 +118,15 @@ class InfoTranslator {
         outBufferToWar.addByte(255); // Fog alpha - unsupported
         // Misc.
         // If globalWeather is not defined or is set to 'none', use 0 sentinel value, else add char[4]
-        if (!infoJson.globalWeather || infoJson.globalWeather.toLowerCase() === 'none') {
+        if (!infoJson.globalWeather ||
+            infoJson.globalWeather.toLowerCase() === "none") {
             outBufferToWar.addInt(0);
         }
         else {
             outBufferToWar.addChars(infoJson.globalWeather); // char[4] - lookup table
         }
-        outBufferToWar.addString(infoJson.customSoundEnvironment || '');
-        outBufferToWar.addChar(infoJson.customLightEnv || 'L');
+        outBufferToWar.addString(infoJson.customSoundEnvironment || "");
+        outBufferToWar.addChar(infoJson.customLightEnv || "L");
         // Custom water tinting
         outBufferToWar.addByte(infoJson.water[0]);
         outBufferToWar.addByte(infoJson.water[1]);
@@ -178,21 +180,21 @@ class InfoTranslator {
         outBufferToWar.addInt(0);
         return {
             errors: [],
-            buffer: outBufferToWar.getBuffer()
+            buffer: outBufferToWar.getBuffer(),
         };
     }
-    static warToJson(buffer) {
+    static warToJson(buffer, props) {
         const result = {
             map: {
-                name: '',
-                author: '',
-                description: '',
-                recommendedPlayers: '',
+                name: "",
+                author: "",
+                description: "",
+                recommendedPlayers: "",
                 playableArea: {
                     width: 64,
-                    height: 64
+                    height: 64,
                 },
-                mainTileType: '',
+                mainTileType: "",
                 flags: {
                     hideMinimapInPreview: false,
                     modifyAllyPriorities: true,
@@ -210,30 +212,35 @@ class InfoTranslator {
                     useItemClassificationSystem: false,
                     enableWaterTinting: false,
                     useAccurateProbabilityForCalculations: false,
-                    useCustomAbilitySkins: false // 0x40000
-                }
+                    useCustomAbilitySkins: false, // 0x40000
+                },
             },
             loadingScreen: {
                 background: 0,
-                path: '',
-                text: '',
-                title: '',
-                subtitle: ''
-            }, prologue: {
-                path: '',
-                text: '',
-                title: '',
-                subtitle: ''
-            }, fog: {
+                path: "",
+                text: "",
+                title: "",
+                subtitle: "",
+            },
+            prologue: {
+                path: "",
+                text: "",
+                title: "",
+                subtitle: "",
+            },
+            fog: {
                 type: FogType.Linear,
                 startHeight: 0,
                 endHeight: 0,
                 density: 0,
-                color: [0, 0, 0, 1]
-            }, camera: {
+                color: [0, 0, 0, 1],
+            },
+            camera: {
                 bounds: [],
-                complements: []
-            }, players: [], forces: [],
+                complements: [],
+            },
+            players: [],
+            forces: [],
             saves: 0,
             editorVersion: 0,
             scriptLanguage: ScriptLanguage.JASS,
@@ -242,37 +249,52 @@ class InfoTranslator {
                 major: 0,
                 minor: 0,
                 patch: 0,
-                build: 0
+                build: 0,
             },
-            globalWeather: '',
-            customSoundEnvironment: '',
-            customLightEnv: '',
-            water: []
+            globalWeather: "",
+            customSoundEnvironment: "",
+            customLightEnv: "",
+            water: [],
         };
         const outBufferToJSON = new W3Buffer_1.W3Buffer(buffer);
         const fileVersion = outBufferToJSON.readInt();
-        result.saves = outBufferToJSON.readInt(),
-            result.editorVersion = outBufferToJSON.readInt();
+        (result.saves = outBufferToJSON.readInt()),
+            (result.editorVersion = outBufferToJSON.readInt());
         result.gameVersion = {
             major: outBufferToJSON.readInt(),
             minor: outBufferToJSON.readInt(),
             patch: outBufferToJSON.readInt(),
-            build: outBufferToJSON.readInt()
+            build: outBufferToJSON.readInt(),
         };
         result.map.name = outBufferToJSON.readString();
         result.map.author = outBufferToJSON.readString();
         result.map.description = outBufferToJSON.readString();
         result.map.recommendedPlayers = outBufferToJSON.readString();
+        if (props === null || props === void 0 ? void 0 : props.skipAfterMapInfo) {
+            return {
+                errors: [],
+                json: result,
+            };
+        }
         result.camera.bounds = [
-            outBufferToJSON.readFloat(), outBufferToJSON.readFloat(), outBufferToJSON.readFloat(), outBufferToJSON.readFloat(),
-            outBufferToJSON.readFloat(), outBufferToJSON.readFloat(), outBufferToJSON.readFloat(), outBufferToJSON.readFloat()
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
+            outBufferToJSON.readFloat(),
         ];
         result.camera.complements = [
-            outBufferToJSON.readInt(), outBufferToJSON.readInt(), outBufferToJSON.readInt(), outBufferToJSON.readInt()
+            outBufferToJSON.readInt(),
+            outBufferToJSON.readInt(),
+            outBufferToJSON.readInt(),
+            outBufferToJSON.readInt(),
         ];
         result.map.playableArea = {
             width: outBufferToJSON.readInt(),
-            height: outBufferToJSON.readInt()
+            height: outBufferToJSON.readInt(),
         };
         const flags = outBufferToJSON.readInt();
         result.map.flags = {
@@ -293,7 +315,7 @@ class InfoTranslator {
             useItemClassificationSystem: !!(flags & 0x8000),
             enableWaterTinting: !!(flags & 0x10000),
             useAccurateProbabilityForCalculations: !!(flags & 0x20000),
-            useCustomAbilitySkins: !!(flags & 0x40000)
+            useCustomAbilitySkins: !!(flags & 0x40000),
         };
         result.map.mainTileType = outBufferToJSON.readChars();
         result.loadingScreen.background = outBufferToJSON.readInt();
@@ -306,19 +328,29 @@ class InfoTranslator {
             path: outBufferToJSON.readString(),
             text: outBufferToJSON.readString(),
             title: outBufferToJSON.readString(),
-            subtitle: outBufferToJSON.readString()
+            subtitle: outBufferToJSON.readString(),
         };
         result.fog = {
             type: outBufferToJSON.readInt(),
             startHeight: outBufferToJSON.readFloat(),
             endHeight: outBufferToJSON.readFloat(),
             density: outBufferToJSON.readFloat(),
-            color: [outBufferToJSON.readByte(), outBufferToJSON.readByte(), outBufferToJSON.readByte(), outBufferToJSON.readByte()] // R G B A
+            color: [
+                outBufferToJSON.readByte(),
+                outBufferToJSON.readByte(),
+                outBufferToJSON.readByte(),
+                outBufferToJSON.readByte(),
+            ], // R G B A
         };
         result.globalWeather = outBufferToJSON.readChars(4);
         result.customSoundEnvironment = outBufferToJSON.readString();
         result.customLightEnv = outBufferToJSON.readChars();
-        result.water = [outBufferToJSON.readByte(), outBufferToJSON.readByte(), outBufferToJSON.readByte(), outBufferToJSON.readByte()]; // R G B A
+        result.water = [
+            outBufferToJSON.readByte(),
+            outBufferToJSON.readByte(),
+            outBufferToJSON.readByte(),
+            outBufferToJSON.readByte(),
+        ]; // R G B A
         result.scriptLanguage = outBufferToJSON.readInt();
         result.supportedModes = outBufferToJSON.readInt();
         outBufferToJSON.readInt(); // unknown
@@ -326,11 +358,11 @@ class InfoTranslator {
         const numPlayers = outBufferToJSON.readInt();
         for (let i = 0; i < numPlayers; i++) {
             const player = {
-                name: '',
+                name: "",
                 startingPos: { x: 0, y: 0, fixed: false },
                 playerNum: 0,
                 type: 0,
-                race: 0
+                race: 0,
             };
             player.playerNum = outBufferToJSON.readInt();
             player.type = outBufferToJSON.readInt(); // 1=Human, 2=Computer, 3=Neutral, 4=Rescuable
@@ -340,7 +372,7 @@ class InfoTranslator {
             player.startingPos = {
                 x: outBufferToJSON.readFloat(),
                 y: outBufferToJSON.readFloat(),
-                fixed: isPlayerStartPositionFixed
+                fixed: isPlayerStartPositionFixed,
             };
             outBufferToJSON.readInt(); // ally low priorities flags (bit "x"=1 --> set for player "x")
             outBufferToJSON.readInt(); // ally high priorities flags (bit "x"=1 --> set for player "x")
@@ -352,9 +384,15 @@ class InfoTranslator {
         const numForces = outBufferToJSON.readInt();
         for (let i = 0; i < numForces; i++) {
             const force = {
-                flags: { allied: false, alliedVictory: true, shareVision: true, shareUnitControl: false, shareAdvUnitControl: false },
+                flags: {
+                    allied: false,
+                    alliedVictory: true,
+                    shareVision: true,
+                    shareUnitControl: false,
+                    shareAdvUnitControl: false,
+                },
                 players: 0,
-                name: ''
+                name: "",
             };
             const forceFlag = outBufferToJSON.readInt();
             force.flags = {
@@ -363,7 +401,7 @@ class InfoTranslator {
                 // 0x00000004: share vision (the documentation has this incorrect)
                 shareVision: !!(forceFlag & 0b1000),
                 shareUnitControl: !!(forceFlag & 0b10000),
-                shareAdvUnitControl: !!(forceFlag & 0b100000) // 0x00000020: share advanced unit control
+                shareAdvUnitControl: !!(forceFlag & 0b100000), // 0x00000020: share advanced unit control
             };
             force.players = outBufferToJSON.readInt(); // UNSUPPORTED: (bit "x"=1 --> player "x" is in this force; but carried over for accurate translation
             force.name = outBufferToJSON.readString();
@@ -414,7 +452,7 @@ class InfoTranslator {
         }
         return {
             errors: [],
-            json: result
+            json: result,
         };
     }
 }

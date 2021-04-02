@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { WarResult, JsonResult } from '../CommonInterfaces';
+import { WarResult, JsonResult } from "../CommonInterfaces";
 interface Map {
     name: string;
     author: string;
@@ -118,7 +118,9 @@ declare enum SupportedModes {
 }
 export declare abstract class InfoTranslator {
     static jsonToWar(infoJson: Info): WarResult;
-    static warToJson(buffer: Buffer): JsonResult<Info>;
+    static warToJson(buffer: Buffer, props?: {
+        skipAfterMapInfo?: boolean;
+    }): JsonResult<Info>;
 }
 export {};
 //# sourceMappingURL=InfoTranslator.d.ts.map
